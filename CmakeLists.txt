@@ -1,0 +1,101 @@
+cmake_minimum_required(VERSION 3.14)
+
+project(poleis  LANGUAGES C CXX)
+
+# 设置编译模式为Debug
+set(CMAKE_BUILD_TYPE Debug)
+
+
+# 或者设置编译模式为Release
+# set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_AUTOMOC TRUE)
+
+# GoogleTest requires at least C++14
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+
+
+
+INCLUDE_DIRECTORIES(C://msys64//mingw64//include//glib-2.0)
+INCLUDE_DIRECTORIES(C://msys64//mingw64//lib//glib-2.0//include)
+INCLUDE_DIRECTORIES(C://msys64//mingw64//include//c++//13.1.0)
+INCLUDE_DIRECTORIES(C://msys64//mingw64//include//c++//13.1.0//x86_64-w64-mingw32)
+INCLUDE_DIRECTORIES(C://msys64//mingw64//include//nice)
+INCLUDE_DIRECTORIES(C://msys64//mingw64//include//gstreamer-1.0)
+INCLUDE_DIRECTORIES(C://msys64//mingw64//include//sio)
+
+
+FIND_LIBRARY(COMM_LIB comm C://msys64//mingw64//lib NO_DEFAULT_PATH)
+
+file(GLOB HEADER_FILES
+    "*.h"
+    "qfluentwidgets-cpp/qfluentwidgets/window/*.h"
+    "qfluentwidgets-cpp/qfluentwidgets/common/*.h"
+    "qfluentwidgets-cpp/qfluentwidgets/multimedia/*.h"
+    "qfluentwidgets-cpp/qfluentwidgets/components/navigation/*.h"
+    "qfluentwidgets-cpp/qfluentwidgets/components/layout/*.h"
+    "qfluentwidgets-cpp/qfluentwidgets/components/date_time/*.h"
+    "qfluentwidgets-cpp/qfluentwidgets/components/dialog_box/*.h"
+    "qfluentwidgets-cpp/qfluentwidgets/components/material/*.h"
+    "qfluentwidgets-cpp/qfluentwidgets/components/settings/*.h"
+    "qfluentwidgets-cpp/qfluentwidgets/components/widgets/*.h"
+    "qfluentwidgets-cpp/qfluentwidgets/qframelesswindow/titlebar/*.h"
+    "qfluentwidgets-cpp/qfluentwidgets/qframelesswindow/utils/*.h"
+    "qfluentwidgets-cpp/qfluentwidgets/qframelesswindow/windows/*.h"
+)
+
+file(GLOB SOURCE_FILES
+    "*.cpp"
+    "*.hpp"
+    "qfluentwidgets-cpp/qfluentwidgets/window/*.cpp"
+    "qfluentwidgets-cpp/qfluentwidgets/common/*.cpp"
+    "qfluentwidgets-cpp/qfluentwidgets/multimedia/*.cpp"
+    "qfluentwidgets-cpp/qfluentwidgets/components/navigation/*.cpp"
+    "qfluentwidgets-cpp/qfluentwidgets/components/layout/*.cpp"
+    "qfluentwidgets-cpp/qfluentwidgets/components/date_time/*.cpp"
+    "qfluentwidgets-cpp/qfluentwidgets/components/dialog_box/*.cpp"
+    "qfluentwidgets-cpp/qfluentwidgets/components/material/*.cpp"
+    "qfluentwidgets-cpp/qfluentwidgets/components/settings/*.cpp"
+    "qfluentwidgets-cpp/qfluentwidgets/components/widgets/*.cpp"
+    "qfluentwidgets-cpp/qfluentwidgets/qframelesswindow/titlebar/*.cpp"
+    "qfluentwidgets-cpp/qfluentwidgets/qframelesswindow/utils/*.cpp"
+    "qfluentwidgets-cpp/qfluentwidgets/qframelesswindow/windows/*.cpp"
+)
+
+
+find_package(Qt5 COMPONENTS Core Gui Widgets Svg Xml Multimedia MultimediaWidgets REQUIRED)
+
+
+
+add_executable(
+  autoupdater-cpp #WIN32
+  main.cpp
+  ${HEADER_FILES} 
+  ${SOURCE_FILES}
+  ${GALLERY_FILE}
+)
+
+target_link_options(autoupdater-cpp PRIVATE "-Wl,--whole-archive")
+
+
+target_link_libraries(
+  autoupdater-cpp
+  glib-2.0
+  gio-2.0
+  gobject-2.0
+  gthread-2.0
+  Qt5::Widgets
+  Qt5::Core
+  Qt5::Gui
+  Qt5::Svg
+  Qt5::Xml
+  Qt5::Multimedia
+  Qt5::MultimediaWidgets
+  Dwmapi
+)
+
