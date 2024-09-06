@@ -1,5 +1,5 @@
-#include "poleis-autoupdater-dcw.h"
 #include "qfluentwidgets-cpp/qfluentwidgets/components/widgets/button.h"
+#include "poleis-autoupdater-dcw.h"
 #include "poleis-autoupdater-dfi.h"
 
 PoleisAutoupdaterDownloadConfirm::PoleisAutoupdaterDownloadConfirm(GList *downloadList, QString title, int updateWaitTime, QWidget *parent) : FramelessDialog(parent)

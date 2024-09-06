@@ -11,7 +11,13 @@ int main(int argc, char *argv[])
     QApplication *app = new QApplication(argc, argv);
 
     PoleisAutoUpdater *updater = new PoleisAutoUpdater();
-    updater->Update();
+    if(updater->Update()){
+        
+    }else{
+        updater->RollBack();
+    }
+
+    qDebug() << "升级成功，启动主程序。";
 
     return app->exec();
 }

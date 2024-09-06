@@ -28,6 +28,7 @@ INCLUDE_DIRECTORIES(C://msys64//mingw64//include//c++//13.1.0//x86_64-w64-mingw3
 INCLUDE_DIRECTORIES(C://msys64//mingw64//include//nice)
 INCLUDE_DIRECTORIES(C://msys64//mingw64//include//gstreamer-1.0)
 INCLUDE_DIRECTORIES(C://msys64//mingw64//include//sio)
+INCLUDE_DIRECTORIES(C://msys64//mingw64//include//libsoup-3.0)
 
 
 FIND_LIBRARY(COMM_LIB comm C://msys64//mingw64//lib NO_DEFAULT_PATH)
@@ -89,6 +90,7 @@ target_link_libraries(
   gio-2.0
   gobject-2.0
   gthread-2.0
+  libsoup-3.0
   Qt5::Widgets
   Qt5::Core
   Qt5::Gui

@@ -5,6 +5,8 @@
 #include "poleis-autoupdater-dfi.h"
 #include "json.hpp"
 #include "poleis-autoupdater-dcw.h"
+#include "poleis-autoupdater-dp.h"
+#include "poleis-autoupdater-cu.h"
 
 PoleisAutoUpdater::PoleisAutoUpdater()
 {
@@ -12,12 +14,12 @@ PoleisAutoUpdater::PoleisAutoUpdater()
 }
 
 
-void PoleisAutoUpdater::Update()
+bool PoleisAutoUpdater::Update()
 {
     //不启用更新
     if(!this->config->getEnabled())
     {
-        return;
+        return true;
     }
 
     this->clearOld();
@@ -79,12 +81,14 @@ void PoleisAutoUpdater::Update()
         PoleisAutoupdaterDownloadConfirm *dc = new PoleisAutoupdaterDownloadConfirm(downloadList, QString("发现新版本"), 10, nullptr);
         if(dc->exec()){
             dc->close();
-            qDebug() << "Yes button is pressed";
+            bool rv =  this->StartDownload(downloadList);
+            return rv;
         }else{
             dc->close();
-            qDebug() << "Cancel button is pressed";
         }
     }
+
+    return true;
 }   
 
 void PoleisAutoUpdater::clearOld()
@@ -178,7 +182,58 @@ bool PoleisAutoUpdater::checkUpdateFiles(std::string filename, std::string md5)
 }
 
 
-void PoleisAutoUpdater::StartDownload(GList *downloadList)
+bool PoleisAutoUpdater::StartDownload(GList *downloadList)
 {
-    
+    PoleisAutoupdaterDownLoadProgress *dp = new PoleisAutoupdaterDownLoadProgress(downloadList, QString("Updating"), nullptr);
+    if(dp->exec()){
+        qDebug() << "download finished.";
+        return true;
+    }else{
+        dp->close();
+        qDebug() << "Cancel button is pressed";
+        return false;
+    }
+}
+
+
+void PoleisAutoUpdater::RollBack()
+{
+    for (GList *df = this->downloadFileListTemp; df != NULL; df = df->next)
+    {
+        PoleisAutoupdaterDownloadFileInfo *dfi = (PoleisAutoupdaterDownloadFileInfo*)df->data;
+        QString tempUrlPaht = QString::fromStdString(PoleisAutoupdaterCommonUnitity::getFolderUrl(dfi));
+        QString oldPath;
+        try
+        {
+            if(!tempUrlPaht.isNull()){
+                oldPath = QDir::currentPath() + tempUrlPaht.mid(1, -1) + QString::fromStdString(dfi->getFileName());
+            }else{
+                oldPath = QDir::currentPath() + QString::fromStdString(dfi->getFileName());
+            }
+
+            if(oldPath.endsWith("_")){
+                oldPath = oldPath.mid(0, oldPath.length() - 1);
+            }
+
+            this->moveFolderToOld(oldPath + "0", oldPath);
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        
+    }
+}
+
+void PoleisAutoUpdater::moveFolderToOld(QString oldPath, QString newPath)
+{
+    if(QFile(oldPath + ".old").exists()){
+        QFile(oldPath + ".old").remove();
+    }
+
+    if(QFile(oldPath).exists()){
+        QFile(oldPath).rename(oldPath, newPath);
+    }
+
+    QFile(oldPath).rename(newPath, oldPath);
 }
